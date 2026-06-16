@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="24dp"
+    android:background="@drawable/card_bg"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground">
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:textSize="36sp" android:text="💰" />
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:textColor="#E0E0E0" android:textSize="14sp" android:layout_marginTop="8dp" />
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:textColor="#666666" android:textSize="12sp" android:text="工具描述" />
+</LinearLayout>
