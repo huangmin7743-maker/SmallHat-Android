@@ -18,18 +18,28 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-
-      - name: Build APK
+      - name: Setup Android SDK
         run: |
-          chmod +x gradlew 2>/dev/null || true
-          echo "android.sdk.root=/usr/lib/android-sdk" > local.properties || true
-          ./gradlew assembleDebug --no-daemon 2>&1 || echo "Gradle wrapper not found, trying direct"
-          if [ ! -f gradlew ]; then
-            apt-get update && apt-get install -y gradle 2>/dev/null
-            gradle assembleDebug 2>&1 || gradle build 2>&1
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          mkdir -p $HOME/android-sdk
+          echo "sdk.dir=$HOME/android-sdk" > local.properties
+
+      - name: Build with Gradle
+        run: |
+          # The system Gradle is at /usr/share/gradle-9.5.1/bin/gradle
+          GRADLE=$(which gradle 2>/dev/null || echo "/usr/share/gradle-*/bin/gradle")
+          echo "Using Gradle: $GRADLE"
+          
+          # Build the APK
+          cd app
+          # First try gradle wrapper, then system gradle
+          if [ -f ../gradlew ]; then
+            ../gradlew assembleDebug --no-daemon
+          else
+            gradle assembleDebug --no-daemon 2>&1 || gradle build --no-daemon 2>&1
           fi
+        env:
+          ANDROID_HOME: ${{ github.workspace }}/android-sdk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
@@ -37,5 +47,5 @@ jobs:
           name: SmallHat-APK
           path: |
             app/build/outputs/apk/debug/*.apk
-            app/build/outputs/apk/*.apk
+            app/build/outputs/apk/**/*.apk
           retention-days: 30
